@@ -36,8 +36,28 @@ class App extends Component {
         throw Error("Nie udało się")
       })
       .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(err => console.log(err))
+
+      .then(data => {
+        const time = new Date().toLocaleString()
+        this.setState(prevState => ({
+          err: false,
+          date: time,
+          sunrise: data.sys.sunrise,
+          sunset: data.sys.sunset,
+          temp: data.main.temp,
+          pressure: data.main.pressure,
+          wind: data.wind.speed,
+          city: prevState.value
+        }))
+      })
+
+      .catch(err => {
+        console.log(err);
+        this.setState(state => ({
+          err: true,
+          city: this.state.value,
+        }))
+      })
   }
 
   render() {
@@ -47,7 +67,7 @@ class App extends Component {
           value={this.state.value}
           change={this.handleInputChange}
           submit={this.handleCitySubmit} />
-        <Result />
+        <Result weather={this.state} />
       </div>
     );
   }
